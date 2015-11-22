@@ -1,0 +1,55 @@
+---
+- hosts: davinci
+  pre_tasks:
+    # Save out our home directory
+    - shell: echo ~
+      register: home
+      sudo: no
+
+    - name: Make sure packages are installed
+      apt: name={{ item }} state=latest
+      with_items:
+        - git
+        - python-flask
+      sudo: yes
+
+    # Also clone git repository to get cache server code, and setup tornado to serve at startup
+    - name: Checkout pdfshrinker source to ~/pdfshrinker
+      git: repo=https://github.com/staticfloat/pdfshrinker.git
+           dest=~/pdfshrinker
+
+  roles:
+    - role: nginx
+      sudo: yes
+      # Install SSL certificates
+      nginx_ssl_files:
+        pdfshrinker.davinci.cs.washington.edu:
+          key: "~/etc/secure/ssl/davinci.cs.washington.edu.key"
+          certs:
+            - "~/etc/secure/ssl/davinci.cs.washington.edu.crt"
+            - "~/etc/secure/ssl/incommon.chain.crt"
+      nginx_sites:
+        # Create HTTP -> HTTPS redirection metaserver
+        ssl_redirect:
+          - listen 80
+          - server_name pdfshrinker.davinci.cs.washington.edu
+          - return 301 https://$http_host$request_uri
+
+        # Actual cache.julialang.org website configuration
+        cache.julialang.org:
+          - listen 443 ssl
+          - server_name         pdfshrinker.davinci.cs.washington.edu
+          - ssl_certificate     ssl/davinci.cs.washington.edu.crt
+          - ssl_certificate_key ssl/davinci.cs.washington.edu.key
+          - ssl_protocols       TLSv1 TLSv1.1 TLSv1.2
+
+          # Send everything off to :5000, which is our python server
+          - location / {
+              proxy_pass http://127.0.0.1:5000;
+            }
+
+    # Also add startup role to run cache.julialang.org/server.py
+    - role: startup_script
+      service_name: pdfshrinker
+      daemon_name: /usr/bin/python
+      daemon_opts: "{{home.stdout}}/pdfshrinker/pdfshrinker.py"

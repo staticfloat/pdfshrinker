@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    var source = new EventSource("/stream");
+    source.onmessage = function(event) {
+        document.getElementById("output").innerHTML += event.data + "<br/>"
+    }
+    </script>
+</head>
+<body>
+    <h1>Upload new File</h1>
+    <form action="/upload" method=post enctype=multipart/form-data>
+      <p><input type=file name=pdf_file>
+         <input type=submit value=Upload onClick=>
+    </form>
+    <div id="output"></div>
+</body>
+</html>
