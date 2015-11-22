@@ -11,6 +11,7 @@
       with_items:
         - git
         - python-flask
+        - ghostscript
       sudo: yes
 
     # Also clone git repository to get cache server code, and setup tornado to serve at startup
@@ -43,8 +44,21 @@
           - ssl_certificate_key ssl/davinci.cs.washington.edu.key
           - ssl_protocols       TLSv1 TLSv1.1 TLSv1.2
 
+          - location = / {
+              index index.html;
+              root {{home.stdout}}/pdfshrinker/static/html/;
+            }
+
+          - location /static {
+              root {{home.stdout}}/pdfshrinker/static/;
+            }
+
           # Send everything off to :5000, which is our python server
-          - location / {
+          - location /upload {
+              proxy_pass http://127.0.0.1:5000;
+            }
+
+          - location /download {
               proxy_pass http://127.0.0.1:5000;
             }
 
