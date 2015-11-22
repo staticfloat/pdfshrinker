@@ -4,6 +4,17 @@
     <script src="static/js/dropzone.js"></script>
     <script src="static/js/jquery-1.11.3.min.js"></script>
     <link rel="stylesheet" href="static/css/dropzone.css">
+    <link rel="stylesheet" href="static/css/style.css">
+    <style>
+        h1 {
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+        .dropzone {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    </style>
     <script>
     Dropzone.options.pdfdropzone = {
         paramName: "pdf_file", // The name that will be used to transfer the file
@@ -16,15 +27,17 @@
             }
         },
         success: function(file, response) {
-            $("#container").append("<div class='file_download'><a href='"+response.download_url+"'> Download "+file.name+"</a></div><br/>")
+            window.location.href = response.download_url;
         }
     };
     </script>
 </head>
 <body>
     <h1>Upload .pdf file to shrink</h1>
-    <form action="/upload" method=post enctype=multipart/form-data class="dropzone" id="pdfdropzone">
+    <form action="/upload" method=post enctype=multipart/form-data class="dropzone dz-clickable" id="pdfdropzone">
+        <div class="dz-message">Drop files or click to upload
+            <br> <span class="note">Shrunk .pdf files will automatically download after processing.</span>
+        </div>
     </form>
-    <div id="container"></div>
 </body>
 </html>
