@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import tempfile, os
+import tempfile, os, shutil
 from subprocess import Popen, PIPE, STDOUT
 from flask import Flask, request, Response, send_from_directory, jsonify
 from werkzeug import secure_filename
@@ -10,9 +10,9 @@ app = Flask(__name__)
 tmpdir = tempfile.mkdtemp()
 
 def allowed_file(filename):
-    return filename[-4:].tolower() == '.pdf'
+    return filename[-4:].lower() == '.pdf'
 
-@app.route('/upload')
+@app.route('/upload', methods=['POST'])
 def upload():
     if request.method == 'POST':
         f = request.files['pdf_file']
@@ -26,17 +26,17 @@ def upload():
             p = Popen(['gs', '-o', small_filename, '-sDEVICE=pdfwrite',
                         '-dPDFSETTINGS=/prepress', '-dFastWebView=true',
                         '-dColorImageResolution=500', '-dGrayImageResolution=500',
-                        '-dMonoImageResolution=500', '-f', filename])
+                        '-dMonoImageResolution=500', '-f', filename], cwd=tmpdir)
             p.wait()
 
             return jsonify({'download_url':'/download/'+small_filename})
 
 @app.route('/download/<filename>')
 def download(filename):
-    return send_from_directory(tmpdir, secure_filename(filename))
+    return send_from_directory(tmpdir, secure_filename(filename), as_attachment=True)
 
 try:
     if __name__ == "__main__":
-        app.run(port=5000)
+        app.run(debug=True, port=5000)
 finally:
-    os.rmdir(tmpdir)
+    shutil.rmtree(tmpdir)

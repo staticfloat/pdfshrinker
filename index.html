@@ -16,13 +16,13 @@
             }
         },
         success: function(file, response) {
-            $("#container").append("<div id='"+file+"' class='file_download'><p><a href='"+response+"'Download "+file+"</a></div><br/>")
+            $("#container").append("<div class='file_download'><a href='"+response.download_url+"'> Download "+file.name+"</a></div><br/>")
         }
     };
     </script>
 </head>
 <body>
-    <h1>Upload new File</h1>
+    <h1>Upload .pdf file to shrink</h1>
     <form action="/upload" method=post enctype=multipart/form-data class="dropzone" id="pdfdropzone">
     </form>
     <div id="container"></div>
