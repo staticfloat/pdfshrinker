@@ -5,9 +5,16 @@
     <script src="static/js/jquery-1.11.3.min.js"></script>
     <link rel="stylesheet" href="static/css/dropzone.css">
     <script>
-    Dropzone.options.myAwesomeDropzone = {
+    Dropzone.options.pdfdropzone = {
         paramName: "pdf_file", // The name that will be used to transfer the file
         maxFilesize: 500, // MB
+        accept: function(file, done) {
+            if( !file.name.endsWith(".pdf") ) {
+                done(".pdf files only!")
+            } else {
+                done()
+            }
+        },
         success: function(file, response) {
             $("#container").append("<div id='"+file+"' class='file_download'><p><a href='"+response+"'Download "+file+"</a></div><br/>")
         }
@@ -16,7 +23,7 @@
 </head>
 <body>
     <h1>Upload new File</h1>
-    <form action="/upload" method=post enctype=multipart/form-data class="dropzone">
+    <form action="/upload" method=post enctype=multipart/form-data class="dropzone" id="pdfdropzone">
     </form>
     <div id="container"></div>
 </body>

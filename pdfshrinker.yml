@@ -39,10 +39,11 @@
         # Actual pdfshrinker website configuration
         pdfshrinker.davinci.cs.washington.edu:
           - listen 443 ssl
-          - server_name         pdfshrinker.davinci.cs.washington.edu
-          - ssl_certificate     ssl/davinci.cs.washington.edu.crt
-          - ssl_certificate_key ssl/davinci.cs.washington.edu.key
-          - ssl_protocols       TLSv1 TLSv1.1 TLSv1.2
+          - server_name          pdfshrinker.davinci.cs.washington.edu
+          - ssl_certificate      ssl/davinci.cs.washington.edu.crt
+          - ssl_certificate_key  ssl/davinci.cs.washington.edu.key
+          - ssl_protocols        TLSv1 TLSv1.1 TLSv1.2
+          - client_max_body_size 500m
 
           - location / {
               root {{home.stdout}}/pdfshrinker;
