@@ -25,8 +25,8 @@ def upload():
             small_filename = filename[:-4] + '_small.pdf'
             p = Popen(['gs', '-o', small_filename, '-sDEVICE=pdfwrite',
                         '-dPDFSETTINGS=/prepress', '-dFastWebView=true',
-                        '-dColorImageResolution=500', '-dGrayImageResolution=500',
-                        '-dMonoImageResolution=500', '-f', filename], cwd=tmpdir)
+                        '-dColorImageResolution=300', '-dGrayImageResolution=300',
+                        '-dMonoImageResolution=300', '-f', filename], cwd=tmpdir)
             p.wait()
 
             return jsonify({'download_url':'/download/'+small_filename})
