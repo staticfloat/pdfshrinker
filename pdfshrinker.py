@@ -25,9 +25,9 @@ def upload():
             small_filename = filename[:-4] + '_small.pdf'
             p = Popen(['gs', '-o', small_filename, '-sDEVICE=pdfwrite',
                         '-dPDFSETTINGS=/prepress', '-dFastWebView=true',
-                        '-dColorImageResolution=300', '-dColorImageDownsampleThreshold=1.0'
-			'-dGrayImageResolution=300', '-dGrayImageDownsampleThreshold=1.0'
-                        '-dMonoImageResolution=300', '-dMonoImageDownsampleThreshold=1.0'
+                        '-dColorImageResolution=300', '-dColorImageDownsampleThreshold=1.0',
+			'-dGrayImageResolution=300', '-dGrayImageDownsampleThreshold=1.0',
+                        '-dMonoImageResolution=300', '-dMonoImageDownsampleThreshold=1.0',
 			'-f', filename], cwd=tmpdir)
             p.wait()
 
